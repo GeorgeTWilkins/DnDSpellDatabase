@@ -1,0 +1,6 @@
+SELECT spell_name AS 'spells' , GROUP_CONCAT(class_name, ', ') AS 'classes' FROM spell_user
+INNER JOIN user ON spell_user.user_id = user.id
+INNER JOIN spell ON spell_user.spell_id = spell.id
+WHERE spell.id = 1
+GROUP BY spell_name
+

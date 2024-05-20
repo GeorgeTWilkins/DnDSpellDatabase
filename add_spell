@@ -1,0 +1,5 @@
+INSERT INTO spell (spell_level, spell_name, description, at_higher_levels, school) 
+VALUES ('1', 'Magic Missle', 'description', NULL, 'evocation');
+INSERT INTO spell_user (spell_id, user_id)
+VALUES ((SELECT id FROM spell WHERE spell_name = 'Magic Missle'), (SELECT id FROM user WHERE class_name = 'Wizard'));
+-- Will add multiple classes in Python --
