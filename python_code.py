@@ -97,16 +97,19 @@ def add_spell(information):
         This is the informaiton about the spell the user entered
     '''
     spl, spn, desc, ahl, sch, cls  = information[0], information[1], information[2], information[3], information[4], information[5]
-    print(spl, spn, desc, ahl, sch, cls)
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
-#    sql = '''
-#        INSERT INTO spell (spell_level, spell_name, description, at_higher_levels, school) 
-#        VALUES ('1', 'Magic Missile', 'description', NULL, 'evocation');
-#        INSERT INTO spell_user (spell_id, user_id)
-#        VALUES ((SELECT id FROM spell WHERE spell_name = 'Magic Missile'), (SELECT id FROM user WHERE class_name = 'Wizard'));
-
-#'''
+    sql_spell = f'''
+        INSERT INTO spell (spell_level, spell_name, description, at_higher_levels, school) 
+        VALUES (?, ?, ?, ?, ?);
+    ''', (str(spl), str(spn), str(desc), str(ahl), str(sch))
+    sql_class = f'''
+        INSERT INTO spell_user (spell_id, user_id)
+        VALUES ((SELECT id FROM spell WHERE spell_name = ?), (SELECT id FROM user WHERE class_name = ?))
+    ''', (str(spn), str(cls))
+    cursor.execute(sql_spell)
+    cursor.execute(sql_class)
+    db.commit()
 
 def prints_info_about_one_spell(name):
     '''To select all information about a select spell
