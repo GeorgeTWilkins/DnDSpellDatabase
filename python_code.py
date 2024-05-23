@@ -10,7 +10,7 @@ screen_width, _ = os.get_terminal_size()
 
 DATABASE = 'dndspells.db'
 
-def all_spell_names():
+def all_spell_names_ASC():
     '''To select all spell names ordered by level ascending
     '''
     db = sqlite3.connect(DATABASE)
@@ -18,9 +18,49 @@ def all_spell_names():
     sql = 'SELECT spell_name FROM spell ORDER BY spell_level ASC'
     cursor.execute(sql)
     results = cursor.fetchall()
-    print('Spell name')
+    print('Spell name:')
     for spells in results:
         print(f'{spells[0]}') 
+
+def all_spell_desc_level_ASC():
+    '''To select all spell names and their descriptions ordered by level ascending
+    '''
+    db = sqlite3.connect(DATABASE)
+    cursor = db.cursor()
+    sql = 'SELECT spell_name, description FROM spell ORDER BY spell_level ASC'
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    for spells in results:
+        print(f'{textwrap.fill(spells[0] + ": " + spells[1], screen_width - 5)}\n')
+
+
+def all_spells_with_classes_level_ASC():
+    '''To select all spells and order by level ascending
+    '''
+    db = sqlite3.connect(DATABASE)
+    cursor = db.cursor()
+    sql = '''SELECT spell_name AS 'spells' , GROUP_CONCAT(class_name, ', ') AS 'classes'
+        FROM spell_user INNER JOIN user ON spell_user.user_id = user.id
+        INNER JOIN spell ON spell_user.spell_id = spell.id GROUP BY spell_name
+        ORDER BY spell_level ASC;
+    '''
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    print('Spell name:                    Class name:')
+    for info in results:
+        print(f'{info[0]:<30} {info[1]}')
+
+def classes_ASC():
+    '''To select all classes that can cast spells
+    '''
+    db = sqlite3.connect(DATABASE)
+    cursor = db.cursor()
+    sql = 'SELECT class_name FROM user ORDER BY class_name ASC'
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    print('Class name:')
+    for classes in results:
+        print(f'{classes[0]}')
 
 def prints_info_about_one_spell(name):
     '''To select all information about a select spell
@@ -50,12 +90,16 @@ def prints_info_about_one_spell(name):
         print(f'''
 Spell level: {spell[0]}
 Spell name: {spell[1]}
-{textwrap.fill('Description: ' + spell[2], screen_width -20)}
+{textwrap.fill('Description: ' + spell[2], screen_width -5)}
 At higher levels: {spell[3]}
 School: {spell[4]}
 Class list: {spell[5]}
 ''')
 
 #main code
-all_spell_names()
-#prints_info_about_one_spell(input ('What spell would you like to know about? '))
+
+#all_spell_desc_level_ASC()
+#all_spells_with_classes_level_ASC()
+#classes_ASC()
+#all_spell_names_ASC()
+prints_info_about_one_spell(input ('What spell would you like to know about? '))
