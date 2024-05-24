@@ -134,10 +134,10 @@ def prints_info_about_one_spell(name):
         FROM spell_user
         INNER JOIN user ON spell_user.user_id = user.id
         INNER JOIN spell ON spell_user.spell_id = spell.id
-        WHERE spell_name LIKE '{name}'
+        WHERE spell_name LIKE ?
         GROUP BY spell_name
-    '''
-    cursor.execute(sql)
+    ''', (name,)
+    cursor.execute(*sql)
     results = cursor.fetchall()
     # Will make the spell level etc. stand out in html
     for spell in results:
@@ -149,9 +149,31 @@ At higher levels: {spell[3]}
 School: {spell[4]}
 Class list: {spell[5]}
 ''')
+        
+def delete_spell(name):
+    '''To delete everything about a specific spell
+
+    Parameters:
+    -----------
+    name: str
+    This is the name of the spell you want to delete
+    '''
+    db = sqlite3.connect(DATABASE)
+    cursor = db.cursor()
+    sql_spell = '''
+        DELETE FROM spell_user WHERE spell_id = (SELECT spell.id FROM spell WHERE spell_name = ?);
+    ''', (name,)
+    sql_spell_user = '''
+        DELETE FROM spell WHERE spell_name = ?;
+    ''', (name,)
+    cursor.execute(*sql_spell,)
+    cursor.execute(*sql_spell_user)
+    db.commit()
 
 #main code  
-add_spell(input('Please enter spell level, spell name, description, at higher levels (if available, otherwise enter as a space), school, and classes all sperated by a comma and if there are multiple classes, sperate by a "/"\n').split(','))
+
+#delete_spell(input('Please enter what spell you would like to delete: \n'))
+#add_spell(input('Please enter spell level, spell name, description, at higher levels (if available, otherwise enter as a space), school, and classes all sperated by a comma and if there are multiple classes, sperate by a "/"\n').split(','))
 #all_spells_with_upcast_level_ASC()
 #all_spell_desc_level_ASC()
 #all_spells_with_classes_level_ASC()
