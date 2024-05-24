@@ -79,6 +79,7 @@ def all_spells_with_upcast_level_ASC():
     cursor.execute(sql)
     results = cursor.fetchall()
     for spell in results:
+        # textwrap.fill makes it so that the text doesn't wrap round mid word. Probably won't be used in final product, but cool
         print(f'''
 Spell level: {spell[0]} 
 Spell name: {spell[1]}\n
@@ -104,7 +105,9 @@ def add_spell(information):
         VALUES (?, ?, ?, ?, ?);
     ''', (spl.strip(), spn.strip(), desc.strip(), ahl.strip(), sch.strip())
     cursor.execute(*sql_spell)
+    # Will have a dropdown select tool so I won't need to verify user input
     classes = cls.split('/')
+    # Runs as many times as needed for all classes to be inputed into bridging table
     for i in range(len(classes)):
         sql_class = '''
             INSERT INTO spell_user (spell_id, user_id)
@@ -147,8 +150,7 @@ School: {spell[4]}
 Class list: {spell[5]}
 ''')
 
-#main code
-
+#main code  
 add_spell(input('Please enter spell level, spell name, description, at higher levels (if available, otherwise enter as a space), school, and classes all sperated by a comma and if there are multiple classes, sperate by a "/"\n').split(','))
 #all_spells_with_upcast_level_ASC()
 #all_spell_desc_level_ASC()
