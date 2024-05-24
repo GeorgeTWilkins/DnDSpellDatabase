@@ -79,6 +79,7 @@ def all_spells_with_upcast_level_ASC():
     cursor.execute(sql)
     results = cursor.fetchall()
     for spell in results:
+        # textwrap.fill makes it so that the text doesn't wrap round mid word. Probably won't be used in final product, but cool
         print(f'''
 Spell level: {spell[0]} 
 Spell name: {spell[1]}\n
@@ -93,20 +94,27 @@ def add_spell(information):
 
     Parameters:
     -----------
-    information: dictionary
+    information: list
         This is the informaiton about the spell the user entered
     '''
-    spl, spn, desc, ahl, sch, cls  = information[0], information[1], information[2], information[3], information[4], information[5]
-    print(spl, spn, desc, ahl, sch, cls)
+    spl, spn, desc, ahl, sch, cls  = information
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
-#    sql = '''
-#        INSERT INTO spell (spell_level, spell_name, description, at_higher_levels, school) 
-#        VALUES ('1', 'Magic Missile', 'description', NULL, 'evocation');
-#        INSERT INTO spell_user (spell_id, user_id)
-#        VALUES ((SELECT id FROM spell WHERE spell_name = 'Magic Missile'), (SELECT id FROM user WHERE class_name = 'Wizard'));
-
-#'''
+    sql_spell = '''
+        INSERT INTO spell (spell_level, spell_name, description, at_higher_levels, school) 
+        VALUES (?, ?, ?, ?, ?);
+    ''', (spl.strip(), spn.strip(), desc.strip(), ahl.strip(), sch.strip())
+    cursor.execute(*sql_spell)
+    # Will have a dropdown select tool so I won't need to verify user input
+    classes = cls.split('/')
+    # Runs as many times as needed for all classes to be inputed into bridging table
+    for i in range(len(classes)):
+        sql_class = '''
+            INSERT INTO spell_user (spell_id, user_id)
+            VALUES ((SELECT id FROM spell WHERE spell_name = ?), (SELECT id FROM user WHERE class_name = ?))
+        ''', (spn, classes[i])
+        cursor.execute(*sql_class)
+    db.commit()
 
 def prints_info_about_one_spell(name):
     '''To select all information about a select spell
@@ -142,8 +150,7 @@ School: {spell[4]}
 Class list: {spell[5]}
 ''')
 
-#main code
-
+#main code  
 add_spell(input('Please enter spell level, spell name, description, at higher levels (if available, otherwise enter as a space), school, and classes all sperated by a comma and if there are multiple classes, sperate by a "/"\n').split(','))
 #all_spells_with_upcast_level_ASC()
 #all_spell_desc_level_ASC()
