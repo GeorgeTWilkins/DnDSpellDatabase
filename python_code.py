@@ -102,13 +102,15 @@ def add_spell(information):
     sql_spell = '''
         INSERT INTO spell (spell_level, spell_name, description, at_higher_levels, school) 
         VALUES (?, ?, ?, ?, ?);
-    ''', (spl, spn, desc, ahl, sch)
-    sql_class = '''
-        INSERT INTO spell_user (spell_id, user_id)
-        VALUES ((SELECT id FROM spell WHERE spell_name = ?), (SELECT id FROM user WHERE class_name = ?))
-    ''', (spn, cls)
+    ''', (spl.strip(), spn.strip(), desc.strip(), ahl.strip(), sch.strip())
     cursor.execute(*sql_spell)
-    cursor.execute(*sql_class)
+    classes = cls.split('/')
+    for i in range(len(classes)):
+        sql_class = '''
+            INSERT INTO spell_user (spell_id, user_id)
+            VALUES ((SELECT id FROM spell WHERE spell_name = ?), (SELECT id FROM user WHERE class_name = ?))
+        ''', (spn, classes[i])
+        cursor.execute(*sql_class)
     db.commit()
 
 def prints_info_about_one_spell(name):
