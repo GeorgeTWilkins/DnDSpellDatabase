@@ -80,6 +80,7 @@ def all_spells_with_upcast_level_ASC():
     results = cursor.fetchall()
     for spell in results:
         # textwrap.fill makes it so that the text doesn't wrap round mid word. Probably won't be used in final product, but cool
+        # textwrap.fill makes it so that the text doesn't wrap round mid word. Probably won't be used in final product, but cool
         print(f'''
 Spell level: {spell[0]} 
 Spell name: {spell[1]}\n
@@ -95,11 +96,27 @@ def add_spell(information):
     Parameters:
     -----------
     information: list
+    information: list
         This is the informaiton about the spell the user entered
     '''
     spl, spn, desc, ahl, sch, cls  = information
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
+    sql_spell = '''
+        INSERT INTO spell (spell_level, spell_name, description, at_higher_levels, school) 
+        VALUES (?, ?, ?, ?, ?);
+    ''', (spl.strip(), spn.strip(), desc.strip(), ahl.strip(), sch.strip())
+    cursor.execute(*sql_spell)
+    # Will have a dropdown select tool so I won't need to verify user input
+    classes = cls.split('/')
+    # Runs as many times as needed for all classes to be inputed into bridging table
+    for i in range(len(classes)):
+        sql_class = '''
+            INSERT INTO spell_user (spell_id, user_id)
+            VALUES ((SELECT id FROM spell WHERE spell_name = ?), (SELECT id FROM user WHERE class_name = ?))
+        ''', (spn, classes[i])
+        cursor.execute(*sql_class)
+    db.commit()
     sql_spell = '''
         INSERT INTO spell (spell_level, spell_name, description, at_higher_levels, school) 
         VALUES (?, ?, ?, ?, ?);
