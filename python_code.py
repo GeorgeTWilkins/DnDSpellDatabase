@@ -90,7 +90,7 @@ Class list: {spell[5]}
 ''')
 
 def add_spell(information):
-    ''' Tod add a spell into the databse
+    ''' To add a spell into the databse
 
     Parameters:
     -----------
@@ -104,7 +104,7 @@ def add_spell(information):
     sql_spell = '''
         INSERT INTO spell (spell_level, spell_name, description, at_higher_levels, school) 
         VALUES (?, ?, ?, ?, ?);
-    ''', (spl.strip(), spn.strip(), desc.strip(), ahl.strip(), sch.strip())
+    ''', (spl, spn, desc, ahl, sch)
     cursor.execute(*sql_spell)
     # Will have a dropdown select tool so I won't need to verify user input
     classes = cls.split('/')
@@ -115,6 +115,12 @@ def add_spell(information):
             VALUES ((SELECT id FROM spell WHERE spell_name = ?), (SELECT id FROM user WHERE class_name = ?))
         ''', (spn, classes[i])
         cursor.execute(*sql_class)
+    # Make sure that at_higher_levels is NULL if need be
+    cursor.execute('''
+        UPDATE spell 
+        SET at_higher_levels = NULL 
+        WHERE at_higher_levels = '';
+''')
     db.commit()
 
 def prints_info_about_one_spell(name):
@@ -174,7 +180,7 @@ def delete_spell(name):
 #main code  
 
 #delete_spell(input('Please enter what spell you would like to delete: \n'))
-add_spell(input('Please enter spell level, spell name, description, at higher levels (if available, otherwise enter as a space), school, and classes all sperated by a comma and if there are multiple classes, sperate by a "/"\n').split(','))
+add_spell(input('Please enter spell level, spell name, description, at higher levels (if available, otherwise leave it empty), school, and classes all sperated by a comma and if there are multiple classes, sperate by a "/"\n').split(','))
 #all_spells_with_upcast_level_ASC()
 #all_spell_desc_level_ASC()
 #all_spells_with_classes_level_ASC()
