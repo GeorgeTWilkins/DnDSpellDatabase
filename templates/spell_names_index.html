@@ -1,0 +1,15 @@
+{% extends 'spell_names_layout.html' %}
+
+
+{% block body %}
+<table>
+    <tr>
+        <th>Spell</th>
+    </tr>
+    <tr>
+    {% for spell in spells %}
+    <td>{{ spell }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

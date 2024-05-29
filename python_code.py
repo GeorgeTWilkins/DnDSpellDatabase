@@ -1,6 +1,7 @@
 #Database assessment -- George Wilkins
 #Imports
 
+from flask import Flask, render_template
 import os
 import textwrap
 import sqlite3
@@ -180,7 +181,7 @@ def delete_spell(name):
 #main code  
 
 #delete_spell(input('Please enter what spell you would like to delete: \n'))
-add_spell(input('Please enter spell level, spell name, description, at higher levels (if available, otherwise leave it empty), school, and classes all sperated by a comma and if there are multiple classes, sperate by a "/"\n').split(','))
+add_spell(input('Please enter spell level, spell name, description, at higher levels (if available, otherwise leave it empty), school, and classes all sperated by a comma and spacem if there are multiple classes, sperate by a "/"\n').split(', '))
 #all_spells_with_upcast_level_ASC()
 #all_spell_desc_level_ASC()
 #all_spells_with_classes_level_ASC()
