@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+
+{% block body %}
+<table class="w3-table w3-hoverable">
+    <tr class="w3-light-grey">
+      <th>Spell name</th>
+    </tr>
+    <tr>
+        {% for spell in spells %}
+        <td>{{ spell }} <div class="w3-container">
+            <a href="/spells/{{ spell }}" class="w3-btn w3-black">{{ spell }}</a></div></td>
+    </tr>
+    {% endfor %}
+    </table>
+    
+{% endblock %}
