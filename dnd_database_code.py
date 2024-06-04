@@ -17,13 +17,26 @@ def spell_names():
 def home():
     return render_template('home_index.html')
 
-spell_name = 'Acid Splash'
 
-@app.route(f'/spells/{spell_name}')
-def single_spell():
+
+@app.route('/spell/<spell>')
+def single_spell(spell):
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
-    cursor.execute
+    sql = f'''
+        SELECT spell_level AS 'Level', spell_name AS 'Name' , description AS 'Description',
+            at_higher_levels AS 'At higher levels', school AS 'School',
+            GROUP_CONCAT(class_name, ', ') AS 'Class name'
+        FROM spell_user
+        INNER JOIN user ON spell_user.user_id = user.id
+        INNER JOIN spell ON spell_user.spell_id = spell.id
+        WHERE spell_name LIKE ?
+        GROUP BY spell_name
+    ''', (spell,)
+    cursor.execute(*sql)
+    ret = cursor.fetchone()
+    return render_template('single_spell_index.html', details = ret)
+
 
 
 

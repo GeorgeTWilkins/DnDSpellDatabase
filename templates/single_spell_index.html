@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+
+{% block body %}
+<table class="w3-table w3-hoverable">
+    <tr class="w3-light-grey">
+      <th>Spell information</th>
+    </tr>
+    {% for d in details %}
+        <tr>
+            <td>{{ d }} <div class="w3-container">
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}  
