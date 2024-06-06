@@ -46,7 +46,7 @@ def add_spell_input():
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
     cursor.execute('''
-                    SELECT class_name FROM user
+                SELECT class_name FROM user ORDER BY class_name ASC
                    ''')
     classes = cursor.fetchall()
     schools = ['Abjuration', 'Conjuration', 'Divination', 'Enchantment', 'Evocation', 'Illusion', 'Necromancy', 'Transmutation']
@@ -89,7 +89,7 @@ def remove_spell_input():
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
     cursor.execute('''
-                    SELECT spell_name FROM spell ORDER BY spell_name ASC
+                    SELECT spell_name FROM spell ORDER BY spell_level ASC
                    ''')
     spell_names_remove = cursor.fetchall()
     return render_template('remove_spell_input.html', spell_names_remove=spell_names_remove)
