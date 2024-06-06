@@ -2,13 +2,13 @@
 
 
 {% block body %}
-<table class="w3-table w3-hoverable">
+<table class="w3-table">
     <tr class="w3-light-grey">
       <th>Spell information</th>
     </tr>
-    {% for d in details %}
+    {% for i in range(6) %}
         <tr>
-            <td>{{ d }} <div class="w3-container">
+            <td><b>{{ single_spell_header[i] }}</b>{{ details[i] }} <div class="w3-container">
         </tr>
     {% endfor %}
     </table>

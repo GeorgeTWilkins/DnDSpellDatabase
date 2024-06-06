@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+
+spl, spn, desc, ahl, sch, cls
+{% block body %}
+<h1>Add spell</h1>
+        <form method="GET" action="{{ url_for('add_spell_save') }}">
+              <label for="spl" style="margin-left: 25px;">Level</label>
+              <select name="spl" id="spl">
+                     {% for i in range(10) %}
+                     <option value={{i}}>{{ i }}</option>
+                     {% endfor %}
+              </select>
+              <br><br>
+              <input type="text" style="margin-left: 25px;"
+                   name="spn"
+                   placeholder="Spell name">
+              <br><br>
+              <input type="text" style="margin-left: 25px;"
+                   name="desc"
+                   placeholder="Description">
+              <br><br>
+              <input type="text" style="margin-left: 25px;"
+                   name="ahl"
+                   placeholder="At higher levels">
+              <br><br>
+              <label for="sch" style="margin-left: 25px;">School</label>
+              <select name="sch" id="sch">
+                     {% for i in schools %}
+                      <option value= {{i}}>{{ i }}</option>
+                     {% endfor %}
+              </select>
+              <br><br>
+              <label for="cls" style="margin-left: 25px;">Classes</label>
+              <br>
+              <select multiple name="cls" id="cls" style="margin-left: 25px;">
+                     {% for i in classes %}
+                      <option value= {{i[0]}}>{{ i[0] }}</option>
+                     {% endfor %}
+              </select>
+              <br><br>
+               <button type="submit" style="margin-left: 25px;">Confirm</button>
+        </form>
+{% endblock %}  
