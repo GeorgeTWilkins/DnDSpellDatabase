@@ -84,15 +84,15 @@ def add_spell_save():
         return render_template('add_spell_input.html', schools = schools)
 
 
-@app.route('/remove_spell_input')
+@app.route('/remove_spell_input', methods = ['GET'])
 def remove_spell_input():
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
     cursor.execute('''
                     SELECT spell_name FROM spell ORDER BY spell_name ASC
                    ''')
-    spell_names = cursor.fetchall()
-    return render_template('remove_spell_input.html', spell_names=spell_names)
+    spell_names_remove = cursor.fetchall()
+    return render_template('remove_spell_input.html', spell_names_remove=spell_names_remove)
     
 
 @app.route('/remove_spell_save', methods = ['GET'])
