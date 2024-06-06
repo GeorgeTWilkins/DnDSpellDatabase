@@ -7,9 +7,12 @@
       <th>Spell name</th>
     </tr>
     <tr>
-        {% for spell in spells %}
+        {% for i in range(10) %}
+        <th>Level {{ i }}</th></tr>
+        {% for spell in spells[i] %}
         <td><a href="/spell/{{ spell }}" class="w3-light-grey">{{ spell }}</a></td>
-    </tr>
+      </tr>
+    {% endfor %}
     {% endfor %}
     </table>
     

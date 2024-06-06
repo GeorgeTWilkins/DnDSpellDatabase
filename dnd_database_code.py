@@ -9,10 +9,15 @@ app = Flask(__name__)
 def spell_names():
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
-    cursor.execute('SELECT spell_name FROM spell ORDER BY spell_level ASC')
-    global ret_spells
-    ret_spells = [i[0] for i in cursor.fetchall()]
-    return render_template('spells.html', spells=ret_spells)
+    cursor.execute('SELECT spell_name, spell_level FROM spell ORDER BY spell_level ASC')
+    level_to_spells = []
+    for name, level in cursor.fetchall():
+        level = int(level)
+        if level >= len(level_to_spells):
+            level_to_spells.append([])
+        level_to_spells[level].append(name)
+    print(level_to_spells)
+    return render_template('spells.html', spells=level_to_spells)
 
 @app.route('/classes')
 def class_names():
@@ -50,7 +55,7 @@ def add_spell_input():
                    ''')
     classes = cursor.fetchall()
     schools = ['Abjuration', 'Conjuration', 'Divination', 'Enchantment', 'Evocation', 'Illusion', 'Necromancy', 'Transmutation']
-    return render_template('add_spell_input.html', schools = schools, classes=classes)
+    return render_template('add_spell_input.html', schools=schools, classes=classes)
     
 
 @app.route('/add_spell_save', methods = ['GET'])
@@ -81,26 +86,27 @@ def add_spell_save():
         return redirect(url_for('single_spell', spell=spn))
     else:
         # This should never happen, but just incase
-        return render_template('add_spell_input.html', schools = schools)
+        schools = ['Abjuration', 'Conjuration', 'Divination', 'Enchantment', 'Evocation', 'Illusion', 'Necromancy', 'Transmutation']
+        return render_template('add_spell_input.html', schools=schools)
 
 
-@app.route('/remove_spell_input', methods = ['GET'])
-def remove_spell_input():
+@app.route('/delete_spells_input', methods = ['GET'])
+def delete_spells_input():
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
     cursor.execute('''
                     SELECT spell_name FROM spell ORDER BY spell_level ASC
                    ''')
     spell_names_remove = cursor.fetchall()
-    return render_template('remove_spell_input.html', spell_names_remove=spell_names_remove)
+    return render_template('delete_spells_input.html', spell_names_remove=spell_names_remove)
     
 
-@app.route('/remove_spell_save', methods = ['GET'])
-def remove_spell_save():  
+@app.route('/delete_spells_save', methods = ['GET'])
+def delete_spells_save():  
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
     if request.method == 'GET':
-        spell = request.args.getlist('remove_spell')
+        spell = request.args.getlist('delete_spells')
         for i in range(len(spell)):
             sql_spell_user = '''
                 DELETE FROM spell_user WHERE spell_id = (SELECT spell.id FROM spell WHERE spell_name = ?);
@@ -114,7 +120,7 @@ def remove_spell_save():
         return render_template('index.html', )
     else:
         # This should never happen, but just incase
-        return render_template('remove_spell_input.html', )
+        return render_template('delete_spells_input.html', )
 
 
 @app.route('/')
