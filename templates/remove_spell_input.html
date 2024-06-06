@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+{% block body %}
+<h1>Delete spells</h1>
+        <form method="GET" action="{{ url_for('remove_spell_save') }}">
+              <label for="remove_spell" style="margin-left: 25px;"></label>
+              <select multiple name="remove_spell" id="remove_spell">
+                     {% for i in spell_names %}
+                      <option value= {{i[0]}}>{{ i[0] }}</option>
+                     {% endfor %}
+              </select>
+              <br><br>
+               <button type="submit" style="margin-left: 25px;">Confirm</button>
+        </form>
+{% endblock %}  

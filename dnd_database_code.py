@@ -22,12 +22,6 @@ def class_names():
     ret = [i[0] for i in cursor.fetchall()]
     return render_template('classes.html', classes=ret)
 
-@app.route('/')
-def home():
-    return render_template('index.html')
-
-
-
 @app.route('/spell/<spell>')
 def single_spell(spell):
     single_spell_header = ['Level: ', 'Name: ', 'Description: ', 'At higher levels: ', 'School: ', 'Classes: ']
@@ -88,6 +82,44 @@ def add_spell_save():
     else:
         # This should never happen, but just incase
         return render_template('add_spell_input.html', schools = schools)
+
+
+@app.route('/remove_spell_input')
+def remove_spell_input():
+    db = sqlite3.connect(DATABASE)
+    cursor = db.cursor()
+    cursor.execute('''
+                    SELECT spell_name FROM spell ORDER BY spell_name ASC
+                   ''')
+    spell_names = cursor.fetchall()
+    return render_template('remove_spell_input.html', spell_names=spell_names)
+    
+
+@app.route('/remove_spell_save', methods = ['GET'])
+def remove_spell_save():  
+    db = sqlite3.connect(DATABASE)
+    cursor = db.cursor()
+    if request.method == 'GET':
+        spell = request.args.getlist('remove_spell')
+        for i in range(len(spell)):
+            sql_spell_user = '''
+                DELETE FROM spell_user WHERE spell_id = (SELECT spell.id FROM spell WHERE spell_name = ?);
+        ''', (spell[i],)
+            cursor.execute(*sql_spell_user)
+            sql_spell = '''
+            DELETE FROM spell WHERE spell_name = ?;
+        ''', (spell[i],)
+            cursor.execute(*sql_spell)
+        db.commit()
+        return render_template('index.html', )
+    else:
+        # This should never happen, but just incase
+        return render_template('remove_spell_input.html', )
+
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
