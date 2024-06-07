@@ -16,7 +16,6 @@ def spell_names():
         if level >= len(level_to_spells):
             level_to_spells.append([])
         level_to_spells[level].append(name)
-    print(level_to_spells)
     return render_template('spells.html', spells=level_to_spells)
 
 @app.route('/classes')
@@ -26,6 +25,29 @@ def class_names():
     cursor.execute('SELECT class_name FROM user ORDER BY class_name ASC')
     ret = [i[0] for i in cursor.fetchall()]
     return render_template('classes.html', classes=ret)
+
+@app.route('/classes/<class_name>')
+def single_class(class_name):
+    print(class_name)
+    db = sqlite3.connect(DATABASE)
+    cursor = db.cursor()
+    sql = f'''
+                SELECT spell_name, spell_level FROM spell_user
+                INNER JOIN user ON spell_user.user_id = user.id
+                INNER JOIN spell ON spell_user.spell_id = spell.id
+                WHERE class_name = ?
+                GROUP BY spell_name
+                ORDER BY spell_level
+                ''', (class_name,)
+    cursor.execute(*sql)
+    level_to_spells = []
+    for name, level in cursor.fetchall():
+        level = int(level)
+        while level >= len(level_to_spells):
+            level_to_spells.append([])
+        level_to_spells[level].append(name)
+    length = len(level_to_spells)
+    return render_template('single_class.html', spells=level_to_spells, class_name=class_name, length=length)
 
 @app.route('/spell/<spell>')
 def single_spell(spell):
@@ -64,7 +86,6 @@ def add_spell_save():
     cursor = db.cursor()
     if request.method == 'GET':
         spl, spn, desc, ahl, sch, cls = request.args.get('spl'), request.args.get('spn'), request.args.get('desc'), request.args.get('ahl'), request.args.get('sch'), request.args.getlist('cls')
-        print(cls)
         sql_spell = '''
             INSERT INTO spell (spell_level, spell_name, description, at_higher_levels, school) 
             VALUES (?, ?, ?, ?, ?);
@@ -107,6 +128,8 @@ def delete_spells_save():
     cursor = db.cursor()
     if request.method == 'GET':
         spell = request.args.getlist('delete_spells')
+        print("|"*80)
+        print(spell)
         for i in range(len(spell)):
             sql_spell_user = '''
                 DELETE FROM spell_user WHERE spell_id = (SELECT spell.id FROM spell WHERE spell_name = ?);

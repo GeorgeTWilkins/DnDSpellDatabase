@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+
+{% block body %}
+<table class="w3-table">
+    <tr class="w3-light-grey">
+      <th>Spells that {{ class_name }} can cast</th>
+    </tr>
+      <tr>
+        {% for i in range(10) %}
+        <th>Level {{ i }}</th></tr>
+            {% for spell in spells[i] %}
+            <td><a href=" /spell/{{ spell }}">{{ spell }}</a></td>
+            </tr>
+            {% endfor %}
+        {% endfor %}
+{% endblock %}  

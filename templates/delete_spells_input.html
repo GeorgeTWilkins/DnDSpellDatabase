@@ -3,7 +3,7 @@
 <h1>Delete spells</h1>
         <form method="GET" action="{{ url_for('delete_spells_save') }}">
               <label for="delete_spells" style="margin-left: 25px;"></label>
-              <select multiple name="delete_spells" id="delete_spells">
+              <select multiple name="delete_spells" id="delete_spells" >
                      {% for i in spell_names_remove %}
                       <option value= {{i[0]}}>{{ i[0] }}</option>
                      {% endfor %}

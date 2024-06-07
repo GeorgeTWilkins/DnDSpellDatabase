@@ -12,4 +12,8 @@
         </tr>
     {% endfor %}
     </table>
+        <form method="GET" action="{{ url_for('delete_spells_save') }}">
+            <input type="hidden" name="delete_spells" value="{{details[1]}}">
+            <input type="submit" value="Delete">
+        </form>
 {% endblock %}  

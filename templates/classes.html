@@ -3,12 +3,12 @@
 
 {% block body %}
 <table class="w3-table">
-    <tr class="w3-light-grey">
+    <tr class="rgb(244, 243, 199)">
       <th>Classes</th>
     </tr>
     <tr>
         {% for class in classes %}
-        <td>{{ class }}</td>
+        <td><a href=" /classes/{{ class }}">{{ class }}</a></td>
     </tr>
     {% endfor %}
     </table>
