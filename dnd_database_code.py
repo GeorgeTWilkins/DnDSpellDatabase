@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
+from django.db import IntegrityError
 import sqlite3
 
 DATABASE = 'dndspells.db'
@@ -80,31 +81,39 @@ def add_spell_input():
     return render_template('add_spell_input.html', schools=schools, classes=classes)
     
 
+@app.route('/spell_name_failure')
+def spell_failure():
+    return render_template('failure.html')
+
 @app.route('/add_spell_save', methods = ['GET'])
 def add_spell_save():  
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
-    if request.method == 'GET':
-        spl, spn, desc, ahl, sch, cls = request.args.get('spl'), request.args.get('spn'), request.args.get('desc'), request.args.get('ahl'), request.args.get('sch'), request.args.getlist('cls')
-        sql_spell = '''
-            INSERT INTO spell (spell_level, spell_name, description, at_higher_levels, school) 
-            VALUES (?, ?, ?, ?, ?);
-        ''', (spl, spn, desc, ahl, sch)
-        cursor.execute(*sql_spell)
-        for i in range(len(cls)):
-            sql_class = '''
-                INSERT INTO spell_user (spell_id, user_id)
-                VALUES ((SELECT id FROM spell WHERE spell_name = ?), (SELECT id FROM user WHERE class_name = ?))
-            ''', (spn, cls[i])
-            cursor.execute(*sql_class)
-        #Make sure that at_higher_levels is NULL if need be
-        cursor.execute('''
-            UPDATE spell 
-            SET at_higher_levels = NULL 
-            WHERE at_higher_levels = '';
-        ''')
-        db.commit()
-        return redirect(url_for('single_spell', spell=spn))
+    try:
+        if request.method == 'GET':
+            spl, spn, desc, ahl, sch, cls = request.args.get('spl'), request.args.get('spn'), request.args.get('desc'), request.args.get('ahl'), request.args.get('sch'), request.args.getlist('cls')
+            sql_spell = '''
+                INSERT INTO spell (spell_level, spell_name, description, at_higher_levels, school) 
+                VALUES (?, ?, ?, ?, ?);
+            ''', (spl, spn, desc, ahl, sch)
+            cursor.execute(*sql_spell)
+            for i in range(len(cls)):
+                sql_class = '''
+                    INSERT INTO spell_user (spell_id, user_id)
+                    VALUES ((SELECT id FROM spell WHERE spell_name = ?), (SELECT id FROM user WHERE class_name = ?))
+                ''', (spn, cls[i])
+                cursor.execute(*sql_class)
+            #Make sure that at_higher_levels is NULL if need be
+            cursor.execute('''
+                UPDATE spell 
+                SET at_higher_levels = NULL 
+                WHERE at_higher_levels = '';
+            ''')
+            db.commit()
+            return redirect(url_for('single_spell', spell=spn))
+    except:
+        return redirect(url_for('spell_failure'))
+        
     else:
         # This should never happen, but just incase
         schools = ['Abjuration', 'Conjuration', 'Divination', 'Enchantment', 'Evocation', 'Illusion', 'Necromancy', 'Transmutation']

@@ -3,6 +3,7 @@
 spl, spn, desc, ahl, sch, cls
 {% block body %}
 <h1>Add spell</h1>
+       <!--Save the spell in the database by sending them to that url. A get resquest happens when clicking on nav bar so I need two different urls-->
         <form method="GET" action="{{ url_for('add_spell_save') }}">
               <label for="spl" style="margin-left: 25px;">Level</label>
               <select name="spl" id="spl">
@@ -23,6 +24,7 @@ spl, spn, desc, ahl, sch, cls
                    name="ahl"
                    placeholder="At higher levels">
               <br><br>
+              <!--Have drop down box for all the schools-->
               <label for="sch" style="margin-left: 25px;">School</label>
               <select name="sch" id="sch">
                      {% for i in schools %}
@@ -32,6 +34,7 @@ spl, spn, desc, ahl, sch, cls
               <br><br>
               <label for="cls" style="margin-left: 25px;">Classes</label>
               <br>
+              <!--Have dropdown box where you can select multiple classes-->
               <p>You can select multiple classes by either using the shift key, or the control key.</p>
               <select multiple name="cls" id="cls" style="margin-left: 25px;">
                      {% for i in classes %}
