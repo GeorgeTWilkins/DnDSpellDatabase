@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for
-from django.db import IntegrityError
 import sqlite3
 
 DATABASE = 'dndspells.db'
@@ -31,7 +30,6 @@ def class_names():
 
 @app.route('/classes/<class_name>') # Have own page for each class
 def single_class(class_name):
-    print(class_name)
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
     sql = f'''
@@ -103,21 +101,24 @@ def add_spell_save():
             ''', (spl, spn, desc, ahl, sch)
             cursor.execute(*sql_spell)
             #If multiple classes have been added it will loop through and add them all
-            for i in range(len(cls)):
-                sql_class = '''
-                    INSERT INTO spell_user (spell_id, user_id)
-                    VALUES ((SELECT id FROM spell WHERE spell_name = ?), (SELECT id FROM user WHERE class_name = ?))
-                ''', (spn, cls[i])
-                cursor.execute(*sql_class)
-            #Make sure that at_higher_levels is NULL if need be
-            cursor.execute('''
-                UPDATE spell 
-                SET at_higher_levels = NULL 
-                WHERE at_higher_levels = '';
-            ''')
-            db.commit()
-            #Make it so they can view their spell once they are done.
-            return redirect(url_for('single_spell', spell=spn))
+            if len(cls) > 0:
+                for i in range(len(cls)):
+                    sql_class = '''
+                        INSERT INTO spell_user (spell_id, user_id)
+                        VALUES ((SELECT id FROM spell WHERE spell_name = ?), (SELECT id FROM user WHERE class_name = ?))
+                    ''', (spn, cls[i])
+                    cursor.execute(*sql_class)
+                #Make sure that at_higher_levels is NULL if need be
+                cursor.execute('''
+                    UPDATE spell 
+                    SET at_higher_levels = NULL 
+                    WHERE at_higher_levels = '';
+                ''')
+                db.commit()
+                #Make it so they can view their spell once they are done.
+                return redirect(url_for('single_spell', spell=spn))
+            else:
+                return redirect(url_for('spell_failure'))
     except: #Not a great thing because if something else breaks, it will still go here
         return redirect(url_for('spell_failure'))
         
