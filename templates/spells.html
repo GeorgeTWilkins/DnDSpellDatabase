@@ -7,10 +7,11 @@
       <th>Spell names <p>(Click on spell name to view it)</p></th>
     </tr>
     <tr>
+      <!--Display all spells and be able to click on them to be able to view them-->
         {% for i in range(10) %}
         <th>Level {{ i }}</th></tr>
         {% for spell in spells[i] %}
-        <td><a href=" /spell/{{ spell }}">{{ spell }}</a></td>
+        <td><a href=" /spell/{{ spell }}" class="ben_hover">{{ spell }}</a></td>
       </tr>
     {% endfor %}
     {% endfor %}

@@ -6,12 +6,14 @@
     <tr class="w3-light-grey">
       <th>Spell information</th>
     </tr>
+    <!--Display information about one spell-->
     {% for i in range(6) %}
         <tr>
             <td><b>{{ single_spell_header[i] }}</b>{{ details[i] }} <div class="w3-container">
         </tr>
     {% endfor %}
     </table>
+    <!--Have a delete button that has the spell name already written in input-->
         <form method="GET" action="{{ url_for('delete_spells_save') }}">
             <input type="hidden" name="delete_spells" value="{{details[1]}}">
             <input type="submit" value="Delete">

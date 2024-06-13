@@ -1,3 +1,15 @@
 body {
     background-color: rgb(244, 243, 199);
   }
+.ben_hover:hover {
+    text-decoration: underline;
+    &:hover {
+      color: rgb(253, 40, 97);
+
+      &::before {
+          visibility: visible;
+          -webkit-transform: scaleX(1);
+          transform: scaleX(1);
+      }   
+  }   
+}

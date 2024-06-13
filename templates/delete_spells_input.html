@@ -1,7 +1,8 @@
 {% extends 'layout.html' %}
 {% block body %}
 <h1>Delete spells</h1>
-        <form method="GET" action="{{ url_for('delete_spells_save') }}">
+       <!--Delete select spell from the database by sending them to that url. A get resquest happens when clicking on nav bar so I need two different urls -->
+       <form method="GET" action="{{ url_for('delete_spells_save') }}">
               <label for="delete_spells" style="margin-left: 25px;"></label>
               <select multiple name="delete_spells" id="delete_spells" >
                      {% for i in spell_names_remove %}
